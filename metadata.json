@@ -1,0 +1,5 @@
+{
+  "name": "GradeSync: MOM to Canvas",
+  "description": "A secure tool to bridge MyOpenMath gradebooks with Canvas LMS using intelligent column mapping.",
+  "requestFramePermissions": []
+}
