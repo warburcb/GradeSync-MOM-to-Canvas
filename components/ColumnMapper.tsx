@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
-import { ArrowRight, Sparkles, Trash2, Plus, ArrowDownToLine, Link as LinkIcon, Edit3 } from 'lucide-react';
+import { ArrowRight, Trash2, Plus, ArrowDownToLine, Link as LinkIcon, Edit3 } from 'lucide-react';
 import { Mapping } from '../types';
-import { suggestMappings } from '../services/geminiService';
 
 interface ColumnMapperProps {
   momHeaders: string[];
@@ -23,8 +21,6 @@ export const ColumnMapper: React.FC<ColumnMapperProps> = ({
   onNext,
   onBack
 }) => {
-  const [isAutoMapping, setIsAutoMapping] = useState(false);
-
   // Filter out columns that are likely student info to keep dropdowns clean
   const studentInfoKeywords = ['name', 'id', 'email', 'sis', 'section'];
   const isAssignmentColumn = (header: string) => 
@@ -46,25 +42,6 @@ export const ColumnMapper: React.FC<ColumnMapperProps> = ({
       // Fallback to regex on header name
       const match = header.match(/\((\d+)\s*(?:pts|points)?\)/i);
       return match ? match[1] : '10'; // Default to 10 if nothing found
-  };
-
-  const handleSmartMap = async () => {
-    setIsAutoMapping(true);
-    const suggestions = await suggestMappings(momHeaders, canvasHeaders);
-    // Merge suggestions
-    setMappings(prev => {
-      const newMappings = [...prev];
-      suggestions.forEach(s => {
-        if (!newMappings.find(m => m.canvasColumn === s.canvasColumn)) {
-          newMappings.push({
-              ...s,
-              points: extractPoints(s.momColumn)
-          });
-        }
-      });
-      return newMappings;
-    });
-    setIsAutoMapping(false);
   };
 
   const handleImportAll = () => {
@@ -117,14 +94,6 @@ export const ColumnMapper: React.FC<ColumnMapperProps> = ({
           >
             <ArrowDownToLine className="w-4 h-4" />
             <span>Import All (Create Missing)</span>
-          </button>
-          <button
-            onClick={handleSmartMap}
-            disabled={isAutoMapping}
-            className="flex items-center space-x-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors disabled:opacity-50"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>Smart Match</span>
           </button>
         </div>
       </div>
